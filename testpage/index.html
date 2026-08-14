@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Filler Test Page</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+      line-height: 1.5;
+    }
+    form {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      background: #fafafa;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin: 1rem 0;
+      padding: 0.75rem 1rem;
+    }
+    input, select, textarea {
+      padding: 0.35rem 0.5rem;
+      border: 1px solid #999;
+      border-radius: 4px;
+      font: inherit;
+    }
+    input:disabled {
+      background: #eee;
+      color: #888;
+    }
+    h2 {
+      margin-top: 2.5rem;
+      border-bottom: 2px solid #333;
+      padding-bottom: 0.25rem;
+    }
+    .note {
+      background: #fff8e1;
+      border-left: 4px solid #f0a500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+    }
+    label {
+      display: block;
+      margin-top: 0.75rem;
+    }
+    label.inline {
+      display: inline-block;
+      margin: 0 1rem 0 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Form Filler Test Page</h1>
+  <p>
+    This page is the manual verification fixture for the Form Filler extension.
+    Load the extension unpacked, open this page over
+    <code>http://localhost:8000/testpage/index.html</code>, and click the Fill button.
+    Do not open this page with a <code>file://</code> URL. Content scripts do not run on <code>file://</code> URLs.
+  </p>
+
+  <section>
+    <h2>1. Customer Form</h2>
+    <p>Profile: <code>create-customer.json</code>. The first five fields fill here.</p>
+    <form action="#" data-form="customer" id="customer-form" method="get">
+      <p class="note">
+        Last name starts pre-filled with "Doe". The profile field for it has
+        <code>skipIfFilled: true</code>, so the fill skips it and "Doe" stays.
+      </p>
+      <p>
+        <label for="firstName">First name</label>
+        <input type="text" id="firstName" name="firstName" autocomplete="given-name">
+      </p>
+      <p>
+        <label for="lastName">Last name (pre-filled)</label>
+        <input type="text" id="lastName" name="lastName" value="Doe" autocomplete="family-name">
+      </p>
+      <p>
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">Select a country</option>
+          <option value="US">United States</option>
+          <option value="CA">Canada</option>
+          <option value="MX">Mexico</option>
+        </select>
+      </p>
+      <fieldset name="tier">
+        <legend>Tier (radio group, selected by value)</legend>
+        <label class="inline"><input type="radio" name="tier" value="gold"><span>Gold</span></label>
+        <label class="inline"><input type="radio" name="tier" value="silver"><span>Silver</span></label>
+        <label class="inline"><input type="radio" name="tier" value="bronze"><span>Bronze</span></label>
+      </fieldset>
+      <p>
+        <label><input type="checkbox" id="newsletter" name="newsletter"><span>Subscribe to the newsletter</span></label>
+      </p>
+      <p>
+        <label for="birthdate">Birthdate</label>
+        <input type="date" id="birthdate" name="birthdate">
+      </p>
+      <p>
+        <label for="notes">Notes (not filled in v1)</label>
+        <textarea id="notes" name="notes" rows="2" placeholder="Textarea is not supported in v1"></textarea>
+      </p>
+    </form>
+  </section>
+
+  <section>
+    <h2>2. Scenario Form</h2>
+    <p>Profiles: <code>create-customer.json</code> and <code>login.json</code> reference this form for the scenario fields.</p>
+    <form action="#" data-form="scenarios" id="scenarios-form" method="get">
+      <h3>2a. Ambiguous field (picker)</h3>
+      <p class="note">
+        Two inputs share the name <code>city</code>. One profile field points at
+        <code>.//input[@name='city']</code>, which matches both. The fill shows the picker.
+        Pick either city to continue.
+      </p>
+      <p>
+        <label for="city-1">City (first)</label>
+        <input type="text" id="city-1" name="city" placeholder="Enter a city">
+      </p>
+      <p>
+        <label for="city-2">City (second)</label>
+        <input type="text" id="city-2" name="city" placeholder="Enter a city">
+      </p>
+
+      <h3>2b. Optional unresolved field</h3>
+      <p class="note">
+        The profile field points at <code>.//input[@name='missingOptional']</code>, which does not
+        exist. The field has <code>optional: true</code>. The fill skips it and continues.
+      </p>
+
+      <h3>2c. Required failure (not found)</h3>
+      <p class="note">
+        The profile field points at <code>.//input[@name='missingRequired']</code>, which does not
+        exist. The field is required by default. The fill stops and reports the failure.
+      </p>
+
+      <h3>2d. Required failure (disabled input)</h3>
+      <p class="note">
+        The profile field points at the disabled input <code>name="locked"</code>. The element
+        resolves but the fill cannot write to it. The fill stops, reports the failure, and outlines
+        the element.
+      </p>
+      <p>
+        <label for="locked">Locked input</label>
+        <input type="text" id="locked" name="locked" value="locked value" disabled>
+      </p>
+    </form>
+  </section>
+
+  <section>
+    <h2>3. Login Form</h2>
+    <p>Profile: <code>login.json</code>.</p>
+    <form action="#" data-form="login" id="login-form" method="get">
+      <p class="note">
+        The login profile fills the username, password, remember checkbox, and the role radio group
+        (selected by label). Then it hits the disabled input in the scenario form, which stops the fill.
+      </p>
+      <p>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username">
+      </p>
+      <p>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password">
+      </p>
+      <p>
+        <label><input type="checkbox" id="remember" name="remember"><span>Remember me</span></label>
+      </p>
+      <fieldset name="role">
+        <legend>Role (radio group, selected by label)</legend>
+        <label class="inline"><input type="radio" name="role" value="admin"><span>Admin</span></label>
+        <label class="inline"><input type="radio" name="role" value="user"><span>User</span></label>
+        <label class="inline"><input type="radio" name="role" value="viewer"><span>Viewer</span></label>
+      </fieldset>
+    </form>
+  </section>
+</body>
+</html>

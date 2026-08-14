@@ -1,0 +1,71 @@
+{
+  "id": "create-customer",
+  "name": "Create Customer",
+  "description": "Fills the new customer form",
+  "urlPatterns": ["*testpage/index.html", "*/customers/new"],
+  "delayMs": 100,
+  "fields": [
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//input[@name='firstName']",
+      "type": "text",
+      "value": "Jane",
+      "clearFirst": true
+    },
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//select[@name='country']",
+      "type": "select",
+      "selectBy": "label",
+      "value": "United States"
+    },
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//fieldset[@name='tier']",
+      "type": "radio",
+      "selectBy": "value",
+      "value": "gold",
+      "optional": true
+    },
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//input[@name='newsletter']",
+      "type": "checkbox",
+      "value": true,
+      "skipIfFilled": true
+    },
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//input[@name='birthdate']",
+      "type": "date",
+      "value": "1990-01-15",
+      "delayMs": 500
+    },
+    {
+      "anchor": "//form[@data-form='customer']",
+      "xpath": ".//input[@name='lastName']",
+      "type": "text",
+      "value": "Skipped",
+      "skipIfFilled": true
+    },
+    {
+      "anchor": "//form[@data-form='scenarios']",
+      "xpath": ".//input[@name='city']",
+      "type": "text",
+      "value": "Springfield"
+    },
+    {
+      "anchor": "//form[@data-form='scenarios']",
+      "xpath": ".//input[@name='missingOptional']",
+      "type": "text",
+      "value": "ignored",
+      "optional": true
+    },
+    {
+      "anchor": "//form[@data-form='scenarios']",
+      "xpath": ".//input[@name='missingRequired']",
+      "type": "text",
+      "value": "ignored"
+    }
+  ]
+}
