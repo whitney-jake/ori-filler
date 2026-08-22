@@ -1,0 +1,223 @@
+{
+  "id": "applicant",
+  "name": "Bob Ross",
+  "description": "65 y.o. Male, clean, MI",
+  "urlPatterns": ["*/public/quote/prospect*"],
+  "delayMs": 300,
+  "waitForMs": 3000,
+  "fields": [
+    {
+      "label": "First name",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "text",
+      "value": "Bob",
+      "step": 1
+    },
+    {
+      "label": "Last name",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "text",
+      "value": "Ross",
+      "step": 1
+    },
+    {
+      "label": "DOB",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "04/20/1961",
+      "step": 1
+    },
+    {
+      "label": "Gender",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Male",
+      "step": 1
+    },
+    {
+      "label": "Email",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "text",
+      "value": "{{uuid}}@example.com",
+      "step": 1
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 1
+    },
+    {
+      "label": "Type",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Truck/Jeep/SUV",
+      "step": 2
+    },
+    {
+      "label": "Year",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "1987",
+      "step": 2
+    },
+    {
+      "label": "Make",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Ford",
+      "step": 2
+    },
+    {
+      "label": "Model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "F-250",
+      "step": 2
+    },
+    {
+      "label": "Sub-model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "XLT Lariat",
+      "step": 2
+    },
+    {
+      "label": "Body style",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Extended Cab Pickup",
+      "step": 2
+    },
+    {
+      "label": "Doors",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "2dr",
+      "step": 2
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 2
+    },
+    {
+      "label": "Amount",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::ice-number//input",
+      "type": "text",
+      "value": "5000",
+      "step": 3
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 3
+    },
+    {
+      "label": "Is the vehicle under active restoration?",
+      "xpath": "//label[contains(.,'active restoration')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 4
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 4
+    },
+    {
+      "label": "Registration Type",
+      "xpath": "//div[@id='regTypeContainer']",
+      "type": "button-group",
+      "value": "Standard",
+      "step": 5
+    },
+    {
+      "label": "How long have you owned the vehicle?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "5 years",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle owned/leased/financed?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "Owned",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "How many miles per year will you drive the vehicle?",
+      "xpath": "//label[contains(.,'miles per year')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "0 - 3,500",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle used as your primary vehicle for daily transportation?",
+      "xpath": "//label[contains(.,'primary vehicle')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for racing?",
+      "xpath": "//label[contains(.,'racing')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for off-roading?",
+      "xpath": "//label[contains(.,'off-roading')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle use for business purposes?",
+      "xpath": "//label[contains(.,'business purposes')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Private garage, barn, car condo, private parking garage, or pole building",
+      "xpath": "//label[contains(.,'Private garage')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "Yes",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 5
+    }
+  ]
+}

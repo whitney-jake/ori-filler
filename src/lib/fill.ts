@@ -1,7 +1,7 @@
 import type { ProfileField } from "../types/profile";
 
 export interface FillStatus {
-  status: "ok" | "failed";
+  status: "ok" | "failed" | "skipped";
   message?: string;
 }
 
@@ -21,8 +21,13 @@ function setNativeValue(el: HTMLInputElement, value: string): void {
   setter.call(el, value);
 }
 
-function dispatchInput(el: Element): void {
-  el.dispatchEvent(new Event("input", { bubbles: true }));
+function dispatchInput(el: Element, inputType?: string): void {
+  el.dispatchEvent(
+    new InputEvent("input", {
+      bubbles: true,
+      inputType: inputType ?? "insertText",
+    }),
+  );
 }
 
 function dispatchChange(el: Element): void {
@@ -40,14 +45,48 @@ function fillTextLike(el: HTMLInputElement, field: ProfileField, value: string):
   if (el.readOnly) {
     return failed("element is readonly");
   }
-  el.focus();
+  if (document.activeElement !== el) {
+    el.focus();
+  }
   if (field.clearFirst !== false) {
-    setNativeValue(el, "");
+    el.value = "";
+    dispatchInput(el, "deleteContentBackward");
   }
   setNativeValue(el, value);
   dispatchInput(el);
   dispatchChange(el);
-  el.blur();
+  if (document.activeElement === el) {
+    el.blur();
+  }
+  return ok();
+}
+
+function fillAutocomplete(el: HTMLInputElement, field: ProfileField, value: string): FillStatus {
+  if (el.disabled) {
+    return failed("element is disabled");
+  }
+  if (el.readOnly) {
+    return failed("element is readonly");
+  }
+  if (document.activeElement !== el) {
+    el.focus();
+  }
+  if (field.clearFirst !== false) {
+    setNativeValue(el, "");
+    dispatchInput(el, "deleteContentBackward");
+  }
+  const setter = Object.getOwnPropertyDescriptor(
+    window.HTMLInputElement.prototype,
+    "value"
+  )!.set!;
+  for (const char of value) {
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: char, bubbles: true }));
+    setter.call(el, el.value + char);
+    el.dispatchEvent(
+      new InputEvent("input", { bubbles: true, inputType: "insertText", data: char }),
+    );
+    el.dispatchEvent(new KeyboardEvent("keyup", { key: char, bubbles: true }));
+  }
   return ok();
 }
 
@@ -81,9 +120,24 @@ function fillCheckbox(el: HTMLInputElement, value: boolean): FillStatus {
   return ok();
 }
 
-function findAssociatedLabel(radio: HTMLInputElement, container: Element): HTMLLabelElement | null {
+function buildLabelMap(container: Element): Map<string, HTMLLabelElement> {
+  const map = new Map<string, HTMLLabelElement>();
   for (const label of container.querySelectorAll("label")) {
-    if (label.htmlFor !== "" && label.htmlFor === radio.id) {
+    if (label.htmlFor !== "") {
+      map.set(label.htmlFor, label);
+    }
+  }
+  return map;
+}
+
+function findAssociatedLabel(
+  radio: HTMLInputElement,
+  labelMap: Map<string, HTMLLabelElement>,
+  container: Element
+): HTMLLabelElement | null {
+  if (radio.id !== "") {
+    const label = labelMap.get(radio.id);
+    if (label) {
       return label;
     }
   }
@@ -101,10 +155,11 @@ function fillRadio(container: Element, field: ProfileField, value: string): Fill
   if (radios.length === 0) {
     return failed("no radio buttons in the group");
   }
+  const labelMap = buildLabelMap(container);
   let match: HTMLInputElement | undefined;
   if (field.selectBy === "label") {
     match = radios.find((radio) => {
-      const label = findAssociatedLabel(radio, container);
+      const label = findAssociatedLabel(radio, labelMap, container);
       return label !== null && label.textContent.trim() === value;
     });
   } else {
@@ -116,9 +171,40 @@ function fillRadio(container: Element, field: ProfileField, value: string): Fill
   if (match.disabled) {
     return failed("element is disabled");
   }
-  match.checked = true;
-  dispatchInput(match);
-  dispatchChange(match);
+  const label = findAssociatedLabel(match, labelMap, container);
+  if (label) {
+    label.click();
+  } else {
+    match.click();
+  }
+  return ok();
+}
+
+function fillButton(el: Element, value: string): FillStatus {
+  const btn = el as HTMLElement;
+  if ("disabled" in btn && (btn as HTMLButtonElement | HTMLInputElement).disabled) {
+    return failed("element is disabled");
+  }
+  if (value !== "" && el.textContent?.trim() !== value) {
+    return failed(`button text "${el.textContent?.trim()}" does not match expected "${value}"`);
+  }
+  btn.click();
+  return ok();
+}
+
+function fillButtonGroup(container: Element, field: ProfileField, value: string): FillStatus {
+  const buttons = Array.from(container.querySelectorAll("button"));
+  if (buttons.length === 0) {
+    return failed("no buttons in the group");
+  }
+  const match = buttons.find((b) => b.textContent.trim() === value);
+  if (!match) {
+    return failed(`no matching button for value "${value}"`);
+  }
+  if (match.disabled) {
+    return failed("element is disabled");
+  }
+  match.click();
   return ok();
 }
 
@@ -131,6 +217,12 @@ export function fillField(el: Element, field: ProfileField, value: string | bool
         return failed("element is not an input element");
       }
       return fillTextLike(el, field, value as string);
+    }
+    case "autocomplete": {
+      if (!(el instanceof HTMLInputElement)) {
+        return failed("element is not an input element");
+      }
+      return fillAutocomplete(el, field, value as string);
     }
     case "select": {
       if (!(el instanceof HTMLSelectElement)) {
@@ -146,6 +238,15 @@ export function fillField(el: Element, field: ProfileField, value: string | bool
     }
     case "radio": {
       return fillRadio(el, field, value as string);
+    }
+    case "button": {
+      return fillButton(el, value as string);
+    }
+    case "button-group": {
+      return fillButtonGroup(el, field, value as string);
+    }
+    default: {
+      return failed(`unsupported field type "${type}"`);
     }
   }
 }

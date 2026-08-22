@@ -21,6 +21,17 @@ The build outputs these files to `dist/`:
 - `dist/ui/styles.css`
 - `dist/profiles/*.json`
 
+The same `dist/` folder works in Chrome and Firefox. The manifest contains
+`browser_specific_settings` for Firefox. Chrome ignores it.
+
+To load the extension in Firefox:
+
+1. Build the extension first. Run `npm run build`.
+2. Open `about:debugging`.
+3. Click "This Firefox".
+4. Click "Load Temporary Add-on".
+5. Select `dist/manifest.json`.
+
 ## Run the test page
 
 The `testpage/index.html` file is a manual verification fixture. Content scripts
@@ -57,37 +68,32 @@ invalid profile at import time and at load time.
   "delayMs": 100,
   "fields": [
     {
-      "anchor": "//form[@data-form='customer']",
-      "xpath": ".//input[@name='firstName']",
+      "xpath": "//form[@data-form='customer']//input[@name='firstName']",
       "type": "text",
       "value": "Jane",
       "clearFirst": true
     },
     {
-      "anchor": "//form[@data-form='customer']",
-      "xpath": ".//select[@name='country']",
+      "xpath": "//form[@data-form='customer']//select[@name='country']",
       "type": "select",
       "selectBy": "label",
       "value": "United States"
     },
     {
-      "anchor": "//form[@data-form='customer']",
-      "xpath": ".//fieldset[@name='tier']",
+      "xpath": "//form[@data-form='customer']//fieldset[@name='tier']",
       "type": "radio",
       "selectBy": "value",
       "value": "gold",
       "optional": true
     },
     {
-      "anchor": "//form[@data-form='customer']",
-      "xpath": ".//input[@name='newsletter']",
+      "xpath": "//form[@data-form='customer']//input[@name='newsletter']",
       "type": "checkbox",
       "value": true,
       "skipIfFilled": true
     },
     {
-      "anchor": "//form[@data-form='customer']",
-      "xpath": ".//input[@name='birthdate']",
+      "xpath": "//form[@data-form='customer']//input[@name='birthdate']",
       "type": "date",
       "value": "1990-01-15",
       "delayMs": 500
@@ -111,13 +117,10 @@ invalid profile at import time and at load time.
 
 | Attribute | Type | Default | Meaning |
 |---|---|---|---|
-| `anchor` | string | required | XPath to a stable container element. The path is absolute from the document root. |
-| `xpath` | string | required | XPath relative to the anchor. The path must start with `./` or `.//`. |
+| `xpath` | string | required | Root-relative XPath to the target element. Must start with `//`. |
 | `type` | string | `text` | One of `text`, `select`, `checkbox`, `radio`, `date`. Textarea is not supported in v1. |
 | `value` | string or boolean | required | See the value rules below. |
 | `selectBy` | string | `value` for radio | `label` or `value`. Required when `type` is `select`. |
-| `fallback` | string array | `["id", "name", "data-testid"]` | Attribute names used when the XPath fails. |
-| `placeholder` | string | optional | Text used for the placeholder-text fallback and the label fallback. |
 | `clearFirst` | boolean | `true` | Clear the field before filling it. |
 | `skipIfFilled` | boolean | `false` | Skip the field when it already has a value. |
 | `optional` | boolean | `false` | Skip the field when it cannot be resolved. |

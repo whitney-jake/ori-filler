@@ -9,37 +9,32 @@ const validRaw = {
   delayMs: 100,
   fields: [
     {
-      anchor: "//form[@data-form='customer']",
-      xpath: ".//input[@name='firstName']",
+      xpath: "//form[@data-form='customer']//input[@name='firstName']",
       type: "text",
       value: "Jane",
       clearFirst: true,
     },
     {
-      anchor: "//form[@data-form='customer']",
-      xpath: ".//select[@name='country']",
+      xpath: "//form[@data-form='customer']//select[@name='country']",
       type: "select",
       selectBy: "label",
       value: "United States",
     },
     {
-      anchor: "//form[@data-form='customer']",
-      xpath: ".//fieldset[@name='tier']",
+      xpath: "//form[@data-form='customer']//fieldset[@name='tier']",
       type: "radio",
       selectBy: "value",
       value: "gold",
       optional: true,
     },
     {
-      anchor: "//form[@data-form='customer']",
-      xpath: ".//input[@name='newsletter']",
+      xpath: "//form[@data-form='customer']//input[@name='newsletter']",
       type: "checkbox",
       value: true,
       skipIfFilled: true,
     },
     {
-      anchor: "//form[@data-form='customer']",
-      xpath: ".//input[@name='birthdate']",
+      xpath: "//form[@data-form='customer']//input[@name='birthdate']",
       type: "date",
       value: "1990-01-15",
       delayMs: 500,
@@ -59,7 +54,6 @@ describe("parseProfile", () => {
 
     const text = p.fields[0];
     expect(text.type).toBe("text");
-    expect(text.fallback).toEqual(["id", "name", "data-testid"]);
     expect(text.clearFirst).toBe(true);
     expect(text.skipIfFilled).toBe(false);
     expect(text.optional).toBe(false);
@@ -90,7 +84,7 @@ describe("parseProfile", () => {
   it("defaults a radio field's selectBy to value", () => {
     const p = parseProfile({
       ...validRaw,
-      fields: [{ anchor: "//form", xpath: ".//fieldset[@name='tier']", type: "radio", value: "gold" }],
+      fields: [{ xpath: "//form//fieldset[@name='tier']", type: "radio", value: "gold" }],
     });
     expect(p.fields[0].selectBy).toBe("value");
   });
@@ -119,35 +113,32 @@ describe("parseProfile", () => {
     expect(() => parseProfile({ ...validRaw, fields: [] })).toThrow(/Invalid profile/);
   });
 
-  it("rejects a field without an anchor", () => {
-    expect(() =>
-      parseProfile({
-        ...validRaw,
-        fields: [{ xpath: ".//input[@name='firstName']", type: "text", value: "Jane" }],
-      })
-    ).toThrow(/Invalid profile/);
-  });
-
   it("rejects a field without an xpath", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", type: "text", value: "Jane" }],
+        fields: [{ type: "text", value: "Jane" }],
       })
     ).toThrow(/Invalid profile/);
   });
 
-  it("rejects a field whose xpath does not start with ./ or .//", () => {
+  it("rejects a field whose xpath does not start with //", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: "input[@name='x']", type: "text", value: "Jane" }],
+        fields: [{ xpath: "input[@name='x']", type: "text", value: "Jane" }],
       })
     ).toThrow(/Invalid profile/);
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: "//input[@name='x']", type: "text", value: "Jane" }],
+        fields: [{ xpath: "//input[@name='x']", type: "text", value: "Jane" }],
+      })
+    ).not.toThrow();
+    expect(() =>
+      parseProfile({
+        ...validRaw,
+        fields: [{ xpath: ".//input[@name='x']", type: "text", value: "Jane" }],
       })
     ).toThrow(/Invalid profile/);
   });
@@ -156,7 +147,7 @@ describe("parseProfile", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: ".//select", type: "select", value: "US" }],
+        fields: [{ xpath: "//form//select", type: "select", value: "US" }],
       })
     ).toThrow(/Invalid profile/);
   });
@@ -166,7 +157,7 @@ describe("parseProfile", () => {
       parseProfile({
         ...validRaw,
         fields: [
-          { anchor: "//form", xpath: ".//select", type: "select", selectBy: "id", value: "US" },
+          { xpath: "//form//select", type: "select", selectBy: "id", value: "US" },
         ],
       })
     ).toThrow(/Invalid profile/);
@@ -176,7 +167,7 @@ describe("parseProfile", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: ".//input", type: "checkbox", value: "yes" }],
+        fields: [{ xpath: "//form//input", type: "checkbox", value: "yes" }],
       })
     ).toThrow(/Invalid profile/);
   });
@@ -185,7 +176,7 @@ describe("parseProfile", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: ".//fieldset", type: "radio", value: true }],
+        fields: [{ xpath: "//form//fieldset", type: "radio", value: true }],
       })
     ).toThrow(/Invalid profile/);
   });
@@ -194,13 +185,43 @@ describe("parseProfile", () => {
     expect(() =>
       parseProfile({
         ...validRaw,
-        fields: [{ anchor: "//form", xpath: ".//input", type: "text", value: true }],
+        fields: [{ xpath: "//form//input", type: "text", value: true }],
       })
     ).toThrow(/Invalid profile/);
   });
 
   it("rejects a negative delayMs", () => {
     expect(() => parseProfile({ ...validRaw, delayMs: -5 })).toThrow(/Invalid profile/);
+  });
+
+  it("defaults waitForNext to false", () => {
+    const p = parseProfile(validRaw);
+    expect(p.fields[0].waitForNext).toBe(false);
+  });
+
+  it("parses waitForNext on field", () => {
+    const p = parseProfile({
+      ...validRaw,
+      fields: [{ xpath: "//form//input", type: "text", value: "x", waitForNext: true }],
+    });
+    expect(p.fields[0].waitForNext).toBe(true);
+  });
+
+  it("parses autocomplete field type", () => {
+    const p = parseProfile({
+      ...validRaw,
+      fields: [{ xpath: "//form//input", type: "autocomplete", value: "Truck" }],
+    });
+    expect(p.fields[0].type).toBe("autocomplete");
+  });
+
+  it("parses button field type", () => {
+    const p = parseProfile({
+      ...validRaw,
+      fields: [{ xpath: "//button[text()='Next']", type: "button", value: "Next" }],
+    });
+    expect(p.fields[0].type).toBe("button");
+    expect(p.fields[0].value).toBe("Next");
   });
 
   it("throws a descriptive error on invalid input", () => {
@@ -220,7 +241,7 @@ describe("validateProfile", () => {
       id: "login",
       name: "Login",
       urlPatterns: ["*/login"],
-      fields: [{ anchor: "//form", xpath: ".//input[@name='user']", value: "admin" }],
+      fields: [{ xpath: "//form//input[@name='user']", value: "admin" }],
     });
     expect(validateProfile(minimal)).toEqual([]);
   });
@@ -228,7 +249,7 @@ describe("validateProfile", () => {
   it("returns problems for a checkbox with a string value", () => {
     const broken: Profile = {
       ...parseProfile(validRaw),
-      fields: [{ anchor: "//form", xpath: ".//input", type: "checkbox", value: "yes" }],
+      fields: [{ xpath: "//form//input", type: "checkbox", value: "yes" }],
     };
     expect(validateProfile(broken)).not.toEqual([]);
   });
@@ -241,7 +262,7 @@ describe("validateProfile", () => {
   it("returns problems for a select without selectBy", () => {
     const broken: Profile = {
       ...parseProfile(validRaw),
-      fields: [{ anchor: "//form", xpath: ".//select", type: "select", value: "US" }],
+      fields: [{ xpath: "//form//select", type: "select", value: "US" }],
     };
     expect(validateProfile(broken)).not.toEqual([]);
   });

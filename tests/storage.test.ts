@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { parseProfile, type Profile } from "../src/types/profile";
 import {
+  clearProfileCache,
   deleteImportedProfile,
   getAllProfiles,
   loadBundledProfiles,
   loadImportedProfiles,
   saveImportedProfile,
+  saveStep,
+  loadStep,
+  clearStepCache,
 } from "../src/lib/storage";
 
 const IMPORTED_KEY = "importedProfiles";
@@ -14,14 +18,14 @@ const createCustomerRaw = {
   id: "create-customer",
   name: "Create Customer",
   urlPatterns: ["*/customers/new"],
-  fields: [{ anchor: "//form", xpath: ".//input[@name='firstName']", value: "Jane" }],
+  fields: [{ xpath: "//input[@name='firstName']", value: "Jane" }],
 };
 
 const loginRaw = {
   id: "login",
   name: "Login",
   urlPatterns: ["*/login"],
-  fields: [{ anchor: "//form", xpath: ".//input[@name='user']", value: "admin" }],
+  fields: [{ xpath: "//input[@name='user']", value: "admin" }],
 };
 
 const createCustomer = parseProfile(createCustomerRaw);
@@ -89,6 +93,8 @@ beforeEach(() => {
   files = new Map();
   installChromeMock();
   installFetchMock();
+  clearProfileCache();
+  clearStepCache();
 });
 
 describe("loadImportedProfiles", () => {
@@ -211,5 +217,38 @@ describe("getAllProfiles", () => {
     expect(result.imported).toHaveLength(1);
     expect(result.bundled[0].name).toBe("Create Customer");
     expect(result.imported[0].name).toBe("Imported Create Customer");
+  });
+});
+
+describe("saveStep and loadStep", () => {
+  it("returns 1 when no step is stored", async () => {
+    expect(await loadStep("profile-1")).toBe(1);
+  });
+
+  it("saves and loads a step for a profile", async () => {
+    saveStep("profile-1", 3);
+    expect(await loadStep("profile-1")).toBe(3);
+  });
+
+  it("stores steps independently per profile", async () => {
+    saveStep("profile-1", 2);
+    saveStep("profile-2", 5);
+    expect(await loadStep("profile-1")).toBe(2);
+    expect(await loadStep("profile-2")).toBe(5);
+  });
+
+  it("overwrites a previously saved step", async () => {
+    saveStep("profile-1", 1);
+    saveStep("profile-1", 4);
+    expect(await loadStep("profile-1")).toBe(4);
+  });
+
+  it("returns 1 for invalid stored values", async () => {
+    store["step:profile-1"] = 0;
+    expect(await loadStep("profile-1")).toBe(1);
+    store["step:profile-1"] = -3;
+    expect(await loadStep("profile-1")).toBe(1);
+    store["step:profile-1"] = "oops";
+    expect(await loadStep("profile-1")).toBe(1);
   });
 });

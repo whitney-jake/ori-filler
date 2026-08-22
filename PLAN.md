@@ -371,7 +371,7 @@ The extension has no background worker in v1. The content script performs all wo
 
 ## 8. Testing strategy
 
-Vitest runs unit tests for every module.
+Vitest runs unit tests for every module. Agents must not run `npm test` or `npx vitest` directly in the main loop. Instead, agents delegate test execution to the `test-runner` subagent using the `task` tool with `subagent_type: test-runner`. The test-runner discovers test files, delegates each file to `test-executor` child agents, re-runs any failures, and produces a structured report.
 
 - glob.test.ts: pattern matching cases, wildcards, edge cases.
 - templates.test.ts: each token, unknown token error, multiple tokens in one value.

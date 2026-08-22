@@ -1,0 +1,177 @@
+{
+  "id": "quote-all-at-once",
+  "name": "New Quote - MI 87 F-250 (All at Once)",
+  "description": "87 F-250 MI Happy Path",
+  "urlPatterns": ["*/public/quote/prospect*"],
+  "delayMs": 300,
+  "waitForMs": 3000,
+  "reVerifyFields": true,
+  "fields": [
+    {
+      "label": "zip code",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "text",
+      "value": "48822"
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "waitForNext": true
+    },
+    {
+      "label": "Type",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Truck/Jeep/SUV"
+    },
+    {
+      "label": "Year",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "1987"
+    },
+    {
+      "label": "Make",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Ford"
+    },
+    {
+      "label": "Model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "F-250"
+    },
+    {
+      "label": "Sub-model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "XLT Lariat"
+    },
+    {
+      "label": "Body style",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Extended Cab Pickup"
+    },
+    {
+      "label": "Doors",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "2dr"
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "waitForNext": true
+    },
+    {
+      "label": "Amount",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::ice-number//input",
+      "type": "text",
+      "value": "5000"
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle under active restoration?",
+      "xpath": "//label[contains(.,'active restoration')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No"
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "waitForNext": true
+    },
+    {
+      "label": "Registration Type",
+      "xpath": "//div[@id='regTypeContainer']",
+      "type": "button-group",
+      "value": "Standard",
+      "waitForNext": true
+    },
+    {
+      "label": "How long have you owned the vehicle?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "5 years",
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle owned/leased/financed?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "Owned",
+      "waitForNext": true
+    },
+    {
+      "label": "How many miles per year will you drive the vehicle?",
+      "xpath": "//label[contains(.,'miles per year')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "0 - 3,500",
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle used as your primary vehicle for daily transportation?",
+      "xpath": "//label[contains(.,'primary vehicle')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for racing?",
+      "xpath": "//label[contains(.,'racing')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for off-roading?",
+      "xpath": "//label[contains(.,'off-roading')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle use for business purposes?",
+      "xpath": "//label[contains(.,'business purposes')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "waitForNext": true
+    },
+    {
+      "label": "Private garage, barn, car condo, private parking garage, or pole building",
+      "xpath": "//label[contains(.,'Private garage')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "Yes",
+      "waitForNext": true
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next"
+    }
+  ]
+}

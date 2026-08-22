@@ -19,7 +19,7 @@ async function build() {
     format: "iife",
     platform: "browser",
     target: "es2019",
-    minify: false,
+    minify: true,
     loader: { ".css": "text" },
   });
   if (result.errors.length > 0) {
@@ -40,15 +40,32 @@ async function build() {
 
   const profilesSource = path.join(root, "profiles");
   if (existsSync(profilesSource)) {
-    const profileFiles = readdirSync(profilesSource)
-      .filter((name) => name.endsWith(".json"))
-      .sort();
+    const profileFiles = [];
+    function walk(dir, rel) {
+      for (const name of readdirSync(dir)) {
+        const full = path.join(dir, name);
+        const relPath = rel === "" ? name : `${rel}/${name}`;
+        if (name.endsWith(".json")) {
+          profileFiles.push(relPath);
+        } else {
+          try {
+            walk(full, relPath);
+          } catch {
+            // Not a directory; skip.
+          }
+        }
+      }
+    }
+    walk(profilesSource, "");
+    profileFiles.sort();
     if (profileFiles.length > 0) {
       const profilesDist = path.join(distDir, "profiles");
       mkdirSync(profilesDist, { recursive: true });
-      for (const name of profileFiles) {
-        copyFileSync(path.join(profilesSource, name), path.join(profilesDist, name));
-        emitted.push(`dist/profiles/${name}`);
+      for (const rel of profileFiles) {
+        const dest = path.join(profilesDist, rel);
+        mkdirSync(path.dirname(dest), { recursive: true });
+        copyFileSync(path.join(profilesSource, rel), dest);
+        emitted.push(`dist/profiles/${rel}`);
       }
       writeFileSync(path.join(profilesDist, "index.json"), JSON.stringify(profileFiles, null, 2));
       emitted.push("dist/profiles/index.json");

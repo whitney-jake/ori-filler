@@ -1,6 +1,12 @@
 const regexMeta = /[.*+?^${}()|[\]\\]/;
 
+const regexCache = new Map<string, RegExp>();
+
 function globToRegExp(pattern: string): RegExp {
+  const cached = regexCache.get(pattern);
+  if (cached) {
+    return cached;
+  }
   let source = "";
   for (const char of pattern) {
     if (char === "*") {
@@ -13,7 +19,9 @@ function globToRegExp(pattern: string): RegExp {
       source += char;
     }
   }
-  return new RegExp("^" + source + "$");
+  const regex = new RegExp("^" + source + "$");
+  regexCache.set(pattern, regex);
+  return regex;
 }
 
 export function matchesUrl(pattern: string, url: string): boolean {

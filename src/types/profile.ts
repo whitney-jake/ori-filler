@@ -1,21 +1,22 @@
 import { z } from "zod";
 
-export type FieldType = "text" | "select" | "checkbox" | "radio" | "date";
+export type FieldType = "text" | "select" | "checkbox" | "radio" | "date" | "autocomplete" | "button" | "button-group";
 export type SelectMatch = "label" | "value";
 
 export interface ProfileField {
-  anchor: string;
   xpath: string;
   type?: FieldType;
   value: string | boolean;
+  label?: string;
   selectBy?: SelectMatch;
-  fallback?: string[];
-  placeholder?: string;
   clearFirst?: boolean;
   skipIfFilled?: boolean;
   optional?: boolean;
   required?: boolean;
   delayMs?: number;
+  waitForMs?: number;
+  waitForNext?: boolean;
+  step?: number;
 }
 
 export interface Profile {
@@ -24,34 +25,37 @@ export interface Profile {
   description?: string;
   urlPatterns: string[];
   delayMs?: number;
+  waitForMs?: number;
+  reVerifyFields?: boolean;
   fields: ProfileField[];
 }
 
-const fieldTypeSchema = z.enum(["text", "select", "checkbox", "radio", "date"]);
+const fieldTypeSchema = z.enum(["text", "select", "checkbox", "radio", "date", "autocomplete", "button", "button-group"]);
 const selectMatchSchema = z.enum(["label", "value"]);
 const delaySchema = z.number().positive();
 const valueSchema = z.union([z.string(), z.boolean()]);
 
 const profileFieldSchema = z
   .object({
-    anchor: z.string().min(1, "anchor is required"),
     xpath: z
       .string()
       .min(1, "xpath is required")
       .refine(
-        (x) => x.startsWith("./") || x.startsWith(".//"),
-        'xpath must start with "./" or ".//"'
+        (x) => x.startsWith("//"),
+        'xpath must start with "//" (root-relative)'
       ),
     type: fieldTypeSchema.default("text"),
     value: valueSchema,
+    label: z.string().optional(),
     selectBy: selectMatchSchema.optional(),
-    fallback: z.array(z.string()).default(["id", "name", "data-testid"]),
-    placeholder: z.string().optional(),
     clearFirst: z.boolean().default(true),
     skipIfFilled: z.boolean().default(false),
     optional: z.boolean().default(false),
     required: z.boolean().default(true),
     delayMs: delaySchema.optional(),
+    waitForMs: delaySchema.optional(),
+    waitForNext: z.boolean().default(false),
+    step: z.number().int().positive().optional(),
   })
   .superRefine((field, ctx) => {
     if (field.type === "checkbox") {
@@ -86,6 +90,8 @@ const profileSchema = z.object({
     .array(z.string().min(1, "each urlPattern must be a non-empty string"))
     .min(1, "urlPatterns must be a non-empty array"),
   delayMs: delaySchema.optional(),
+  waitForMs: delaySchema.optional(),
+  reVerifyFields: z.boolean().default(false),
   fields: z.array(profileFieldSchema).min(1, "fields must be a non-empty array"),
 });
 
