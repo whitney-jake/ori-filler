@@ -1,0 +1,22 @@
+{
+  "name": "form-filler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "esbuild": "^0.28.2",
+    "vitest": "^4.1.10",
+    "jsdom": "^30.0.1",
+    "xpath": "^0.0.34",
+    "@types/chrome": "^0.2.6"
+  }
+}
