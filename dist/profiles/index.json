@@ -1,0 +1,7 @@
+[
+  "customers/BobRoss.json",
+  "examples/create-customer.json",
+  "examples/login.json",
+  "vehicles/quote-all-at-once.json",
+  "vehicles/quote.json"
+]

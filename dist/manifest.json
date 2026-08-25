@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Form Filler",
+  "version": "0.1.0",
+  "description": "Fills test form profiles on demand",
+  "permissions": ["storage"],
+  "host_permissions": ["https://uat-openroad-apps.digital1st.io/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://uat-openroad-apps.digital1st.io/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["profiles/*.json"],
+      "matches": ["https://uat-openroad-apps.digital1st.io/*"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "form-filler@testteam.local",
+      "strict_min_version": "115.0"
+    }
+  }
+}
