@@ -64,21 +64,21 @@
       "label": "Sub-model",
       "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
       "type": "autocomplete",
-      "value": "Base",
+      "value": "170ci I6 (U-Code) - Fastback - 1st Gen ('65-'66)",
       "step": 2
     },
     {
       "label": "Body style",
       "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
       "type": "autocomplete",
-      "value": "Hardtop",
+      "value": "Coupe",
       "step": 2
     },
     {
       "label": "Doors",
       "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
       "type": "autocomplete",
-      "value": "2dr",
+      "value": "2 Doors",
       "step": 2
     },
     {

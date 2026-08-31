@@ -51,9 +51,16 @@ Labels in order, each one narrowing the next: `Type`, `Year`, `Make`, `Model`,
 `Sub-model`, `Body style`, `Doors`. Fill them in that order. Then Next.
 
 `__acProbe(label, "")` lists what a field accepts at that point. Observed
-values for a 1965 Ford Mustang: Type `Auto`, Sub-model `Base` (the list also
-carries about 35 engine-coded trims), Body style `Hardtop` / `Fastback` /
-`Convertible`, Doors `2dr`.
+values for a 1965 Ford Mustang: Type `Auto`, Sub-model `Base` plus about 35
+engine-coded trims. The sub-model narrows the two fields after it. With the
+engine-coded trim `170ci I6 (U-Code) - Fastback - 1st Gen ('65-'66)`, Body style
+is `Coupe` and Doors is `2 Doors`. With plain `Base`, Body style is `Hardtop` /
+`Fastback` / `Convertible` and Doors is `2dr`. The quote profiles use the
+engine-coded trim, so they use `Coupe` and `2 Doors`.
+
+Option text must match exactly. `waitForListOption` in `src/lib/wait.ts` compares
+the trimmed `textContent` of each `li` to the profile value with `===`. Copy the
+label character for character, including apostrophes and dashes.
 
 **A reCAPTCHA follows this screen.** Next opens a "Verification required" modal
 with an "I'm not a robot" checkbox. No profile can clear it. The tester solves
