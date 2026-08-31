@@ -7,7 +7,7 @@ import { fillField, hasValue } from "../lib/fill";
 import { waitForElement, waitForListOption } from "../lib/wait";
 import { shouldSkipField, hasLaterButton } from "../lib/step";
 import type { FillStatus } from "../lib/fill";
-import { getAllProfiles, saveImportedProfile, deleteImportedProfile, saveStep, loadStep } from "../lib/storage";
+import { loadImportedProfiles, saveImportedProfile, deleteImportedProfile, saveStep, loadStep } from "../lib/storage";
 import {
   injectUi,
   renderProfileList,
@@ -46,8 +46,6 @@ interface PendingPick {
 
 let fillState: FillState | null = null;
 let pendingPick: PendingPick | null = null;
-let importedProfiles = new Set<Profile>();
-const deletedBundledIds = new Set<string>();
 let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 let waitCancel: (() => void) | null = null;
 let currentStep = 1;
@@ -70,12 +68,8 @@ function scheduleRefresh(): void {
 }
 
 async function refreshProfiles(): Promise<void> {
-  const { bundled, imported } = await getAllProfiles();
-  importedProfiles = new Set(imported);
-  const candidates = bundled
-    .filter((profile) => !deletedBundledIds.has(profile.id))
-    .concat(imported);
-  const matching = candidates.filter((profile) =>
+  const imported = await loadImportedProfiles();
+  const matching = imported.filter((profile) =>
     anyPatternMatches(profile.urlPatterns, window.location.href)
   );
   renderProfileList(matching);
@@ -128,16 +122,11 @@ function onImport(text: string): void {
 }
 
 function onDelete(profile: Profile): void {
-  if (importedProfiles.has(profile)) {
-    fireAndForget(deleteImportedProfile(profile.id)
-      .then(() => refreshProfiles())
-      .catch(() => {
-        // The delete failed. The list stays unchanged.
-      }));
-  } else {
-    deletedBundledIds.add(profile.id);
-    fireAndForget(refreshProfiles());
-  }
+  fireAndForget(deleteImportedProfile(profile.id)
+    .then(() => refreshProfiles())
+    .catch(() => {
+      // The delete failed. The list stays unchanged.
+    }));
 }
 
 function onAmbiguityPick(profile: Profile, field: ProfileField, matchIndex: number): void {
@@ -180,8 +169,12 @@ async function advance(): Promise<void> {
   }
   while (state.fieldIndex < state.profile.fields.length) {
     const index = state.fieldIndex;
+    const field = state.profile.fields[index];
+    if (shouldSkipField(field, currentStep)) {
+      state.fieldIndex += 1;
+      continue;
+    }
     if (index > 0) {
-      const field = state.profile.fields[index];
       const delay = field.delayMs ?? state.profile.delayMs ?? 0;
       await new Promise<void>((resolve) => setTimeout(resolve, delay));
       if (fillState !== state) {
@@ -189,7 +182,6 @@ async function advance(): Promise<void> {
       }
     }
     clearXPathCache();
-    const field = state.profile.fields[index];
     const xpath = expand(field.xpath, field);
     const resolvedField = { ...field, xpath };
     let result = resolveField(document, resolvedField);
