@@ -2,3 +2,5 @@ node_modules/
 .opencode/
 .playwright-cli/
 *.png
+.claude/settings.local.json
+.playwright-mcp/
