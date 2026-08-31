@@ -464,12 +464,10 @@ function buildProfileRow(profile: Profile): HTMLElement {
   name.className = "ff-profile-name";
   name.textContent = profile.name;
   info.appendChild(name);
-  if (profile.description) {
-    const description = document.createElement("div");
-    description.className = "ff-profile-description";
-    description.textContent = profile.description;
-    info.appendChild(description);
-  }
+  const description = document.createElement("div");
+  description.className = "ff-profile-description";
+  description.textContent = profile.description ?? "";
+  info.appendChild(description);
   const count = document.createElement("div");
   count.className = "ff-profile-count";
   count.textContent = `${profile.fields.length} field${profile.fields.length === 1 ? "" : "s"}`;
