@@ -1,0 +1,282 @@
+{
+  "id": "openroad-quote-pa",
+  "name": "OpenRoad Quote - PA 1965 Mustang",
+  "description": "Pennsylvania smoke test. 1965 Ford Mustang, applicant SmoketestPA08292026. One Fill click per screen. After step 2 the site shows a reCAPTCHA: solve it by hand, then click Fill again for step 3. Step 7 ends at the rating call.",
+  "urlPatterns": [
+    "*/public/quote/prospect*"
+  ],
+  "delayMs": 300,
+  "waitForMs": 5000,
+  "reVerifyFields": true,
+  "fields": [
+    {
+      "label": "Create a new quote",
+      "xpath": "//*[normalize-space(text())='{{field.label}}' and not(*)]",
+      "type": "button",
+      "value": "Create a new quote",
+      "optional": true,
+      "waitForNext": true,
+      "step": 1
+    },
+    {
+      "label": "zip code",
+      "xpath": "//label[contains(text(),'{{field.label}}')]/following-sibling::div[1]//input",
+      "type": "text",
+      "value": "15675",
+      "step": 1
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 1
+    },
+    {
+      "label": "Type",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Auto",
+      "step": 2
+    },
+    {
+      "label": "Year",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "1965",
+      "step": 2
+    },
+    {
+      "label": "Make",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Ford",
+      "step": 2
+    },
+    {
+      "label": "Model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Mustang",
+      "step": 2
+    },
+    {
+      "label": "Sub-model",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Base",
+      "step": 2
+    },
+    {
+      "label": "Body style",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "Hardtop",
+      "step": 2
+    },
+    {
+      "label": "Doors",
+      "xpath": "//label[text()='{{field.label}}']/following-sibling::div[1]//input",
+      "type": "autocomplete",
+      "value": "2dr",
+      "step": 2
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 2
+    },
+    {
+      "label": "Amount",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::input[1]",
+      "type": "text",
+      "value": "25000",
+      "step": 3
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 3
+    },
+    {
+      "label": "Is the vehicle under active restoration?",
+      "xpath": "//label[contains(.,'active restoration')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 4
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 4
+    },
+    {
+      "label": "Registration type",
+      "xpath": "//div[@id='regTypeContainer']",
+      "type": "button-group",
+      "value": "Standard",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "How long have you owned the vehicle?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "5 years",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle owned/leased/financed?",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "Financed",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "How many miles per year will you drive the vehicle?",
+      "xpath": "//label[contains(.,'miles per year')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "0 - 3,500",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Private garage, barn, car condo, private parking garage, or pole building",
+      "xpath": "//label[contains(.,'Private garage')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "Yes",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is this vehicle used as your primary vehicle for daily transportation?",
+      "xpath": "//label[contains(.,'primary vehicle')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for racing?",
+      "xpath": "//label[contains(.,'racing')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle used for off-roading?",
+      "xpath": "//label[contains(.,'off-roading')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Is the vehicle use for business purposes?",
+      "xpath": "//label[contains(.,'business purposes')]/ancestor::ice-radio-button[1]",
+      "type": "radio",
+      "selectBy": "label",
+      "value": "No",
+      "step": 5,
+      "waitForNext": true
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 5
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 6
+    },
+    {
+      "label": "First name",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::input[1]",
+      "type": "text",
+      "value": "XXTest",
+      "step": 7
+    },
+    {
+      "label": "Last name",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::input[1]",
+      "type": "text",
+      "value": "SmoketestPA08292026",
+      "step": 7
+    },
+    {
+      "label": "DOB",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::input[1]",
+      "type": "text",
+      "value": "01/01/1970",
+      "step": 7
+    },
+    {
+      "label": "Gender",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "Male",
+      "step": 7
+    },
+    {
+      "label": "Email",
+      "xpath": "//label[contains(.,'{{field.label}}')]/following::input[1]",
+      "type": "text",
+      "value": "b2btesting@openroadinsure.com",
+      "step": 7
+    },
+    {
+      "label": "Physical Address",
+      "xpath": "//label[contains(.,'{{field.label}}')]/ancestor::div[contains(@class,'search-container')][1]//input[contains(@class,'inputAutocomplete')]",
+      "type": "autocomplete",
+      "value": "500 Coal St,Penn,PA,15675",
+      "step": 7,
+      "waitForNext": true
+    },
+    {
+      "label": "Who is the current collector vehicle insurance provider?",
+      "xpath": "//label[contains(.,'current collector vehicle insurance provider')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "Not Currently Insured",
+      "step": 7
+    },
+    {
+      "label": "Is the applicant a member of a car club?",
+      "xpath": "//label[contains(.,'member of a car club')]/following::select[1]",
+      "type": "select",
+      "selectBy": "label",
+      "value": "None",
+      "step": 7
+    },
+    {
+      "label": "Next",
+      "xpath": "//button[contains(.,'{{field.label}}')]",
+      "type": "button",
+      "value": "Next",
+      "step": 7
+    }
+  ]
+}

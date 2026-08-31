@@ -2,6 +2,10 @@
   "customers/BobRoss.json",
   "examples/create-customer.json",
   "examples/login.json",
+  "quotes/openroad-quote-mi.json",
+  "quotes/openroad-quote-oh.json",
+  "quotes/openroad-quote-pa.json",
+  "quotes/openroad-quote-tx.json",
   "vehicles/quote-all-at-once.json",
   "vehicles/quote.json"
 ]
